@@ -9,7 +9,7 @@ import (
 
 func main() {
 	fmt.Println("advent of code 2022")
-	fmt.Println("day 0333")
+	fmt.Println("day 03")
 	fmt.Println("task 1")
 
 	file, err := os.Open("../input")
