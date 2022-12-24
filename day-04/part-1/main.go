@@ -72,7 +72,7 @@ func (r Range) contains(i int) bool {
 	return r.from <= i && i <= r.to
 }
 
-// containsRange returns true if range 'r' containsRange range 'r2'.
+// containsRange returns true if range 'r' contains range 'r2'.
 func (r Range) containsRange(r2 Range) bool {
 	return r.contains(r2.from) && r.contains(r2.to)
 }
@@ -80,3 +80,4 @@ func (r Range) containsRange(r2 Range) bool {
 func (r Range) overlaps(r2 Range) bool {
 	return r.containsRange(Range{r2.from, r2.from}) || r.containsRange(Range{r2.to, r2.to})
 }
+
