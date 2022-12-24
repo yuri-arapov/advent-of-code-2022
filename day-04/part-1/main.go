@@ -78,12 +78,13 @@ func (r Range) includes(r2 Range) bool {
 	return r.contains(r2.from) && r.contains(r2.to)
 }
 
+// overlaps returns true if range 'r' overlaps with range 'r2'.
 func (r Range) overlaps(r2 Range) bool {
 	return r.contains(r2.from) || r.contains(r2.to)
 }
 
-// ymap maps elements of array 'args' of type 'T1' into array of type 'T2'
-// with the function 'f'.
+// ymap applies function 'f' to every element of array 'args' of type 'T1' and
+// returns array of type 'T2'.
 func ymap[T1 any, T2 any](args []T1, f func(a T1) T2) []T2 {
 	res := make([]T2, len(args))
 	for i := range args {
