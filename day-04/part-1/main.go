@@ -33,7 +33,7 @@ func main() {
 			r1 := parseRange(commaSplit[0])
 			r2 := parseRange(commaSplit[1])
 			fmt.Println(r1, r2)
-			if r1.contains(r2) || r2.contains(r1) {
+			if r1.containsRange(r2) || r2.containsRange(r1) {
 				inclusions++
 			}
 			if r1.overlaps(r2) || r2.overlaps(r1) {
@@ -67,11 +67,16 @@ func toInt(s string) int {
 	return num
 }
 
-// contains returns true if range 'r' contains range 'r2'.
-func (r Range) contains(r2 Range) bool {
-	return r2.from >= r.from && r2.to <= r.to
+// contains returns true if range 'r' contains value 'i'.
+func (r Range) contains(i int) bool {
+	return r.from <= i && i <= r.to
+}
+
+// containsRange returns true if range 'r' containsRange range 'r2'.
+func (r Range) containsRange(r2 Range) bool {
+	return r.contains(r2.from) && r.contains(r2.to)
 }
 
 func (r Range) overlaps(r2 Range) bool {
-	return r.contains(Range{r2.from, r2.from}) || r.contains(Range{r2.to, r2.to})
+	return r.containsRange(Range{r2.from, r2.from}) || r.containsRange(Range{r2.to, r2.to})
 }
