@@ -29,11 +29,9 @@ func main() {
 	for scanner.Scan() {
 		line := scanner.Text()
 		if line != "" {
-			commaSplit := strings.Split(line, ",")
-			r1 := parseRange(commaSplit[0])
-			r2 := parseRange(commaSplit[1])
+			r1, r2 := firstTwo(ymap(strings.Split(line, ","), parseRange))
 			fmt.Println(r1, r2)
-			if r1.containsRange(r2) || r2.containsRange(r1) {
+			if r1.includes(r2) || r2.includes(r1) {
 				inclusions++
 			}
 			if r1.overlaps(r2) || r2.overlaps(r1) {
@@ -51,12 +49,15 @@ type Range struct {
 	from, to int
 }
 
-func parseRange(s string) Range {
-	dashSplit := strings.Split(s, "-")
+func makeRange(from, to int) Range {
 	return Range{
-		from: toInt(dashSplit[0]),
-		to:   toInt(dashSplit[1]),
+		from: from,
+		to:   to,
 	}
+}
+
+func parseRange(s string) Range {
+	return makeRange(firstTwo(ymap(strings.Split(s, "-"), toInt)))
 }
 
 func toInt(s string) int {
@@ -72,12 +73,29 @@ func (r Range) contains(i int) bool {
 	return r.from <= i && i <= r.to
 }
 
-// containsRange returns true if range 'r' contains range 'r2'.
-func (r Range) containsRange(r2 Range) bool {
+// includes returns true if range 'r' contains both ends of range 'r2'.
+func (r Range) includes(r2 Range) bool {
 	return r.contains(r2.from) && r.contains(r2.to)
 }
 
 func (r Range) overlaps(r2 Range) bool {
-	return r.containsRange(Range{r2.from, r2.from}) || r.containsRange(Range{r2.to, r2.to})
+	return r.contains(r2.from) || r.contains(r2.to)
 }
 
+// ymap maps elements of array 'args' of type 'T1' into array of type 'T2'
+// with the function 'f'.
+func ymap[T1 any, T2 any](args []T1, f func(a T1) T2) []T2 {
+	res := make([]T2, len(args))
+	for i := range args {
+		res[i] = f(args[i])
+	}
+	return res
+}
+
+// firstTwo returns first two elements of array 'args'.
+func firstTwo[T any](args []T) (T, T) {
+	if len(args) < 2 {
+		panic("at least 2 elements in array expected")
+	}
+	return args[0], args[1]
+}
